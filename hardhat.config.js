@@ -14,7 +14,19 @@ const ETHERSCAN_API_KEY = process.env.ETHERSCAN_API_KEY || "key";
 const COINMARKETCAP_API_KEY = process.env.COINMARKETCAP_API_KEY;
 
 module.exports = {
-  solidity: "0.8.18",
+  solidity: {
+    compilers: [
+      {
+        version: "0.8.8",
+      },
+      {
+        version: "0.6.12",
+      },
+      {
+        version: "0.4.19",
+      },
+    ],
+  },
   namedAccounts: {
     deployer: {
       default: 0,
