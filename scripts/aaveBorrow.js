@@ -36,6 +36,13 @@ async function main() {
   await getBorrowUserData(lendingPool, deployer);
 }
 
+async function repay(daiAddress, lendingPool, amount, account) {
+  await approveErv20(daiAddress, lendingPool.address, amount, account);
+  const repayTx = await lendingPool.repay(daiAddress, amount, 1, account);
+  await repayTx.wait(1);
+  console.log("Repaid!");
+}
+
 async function borrowDai(daiAddress, lendingPool, amountDaiToBorrow, account) {
   const borrowTx = await lendingPool.borrow(
     daiAddress,
