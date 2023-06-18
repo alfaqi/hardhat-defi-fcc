@@ -6,11 +6,17 @@ async function main() {
 
   const { deployer } = await getNamedAccounts();
   const lendingPool = await getLendingPool(deployer);
+
   const wethTokenAddress = "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2";
+
+  await getBorrowUserData(lendingPool, deployer);
+
   await approveErv20(wethTokenAddress, lendingPool.address, AMOUNT, deployer);
   console.log("Depositing WETH...");
   await lendingPool.deposit(wethTokenAddress, AMOUNT, deployer, 0);
   console.log("Deposited!");
+
+  await getBorrowUserData(lendingPool, deployer);
 }
 
 async function approveErv20(erc20Address, spenderAddress, amount, signer) {
@@ -19,6 +25,7 @@ async function approveErv20(erc20Address, spenderAddress, amount, signer) {
   await txResponse.wait(1);
   console.log("Approved!");
 }
+
 async function getLendingPool(account) {
   const lendingPoolAddressesProvider = await ethers.getContractAt(
     "ILendingPoolAddressesProvider",
@@ -33,6 +40,15 @@ async function getLendingPool(account) {
     account
   );
   return lendingPool;
+}
+
+async function getBorrowUserData(lendingPool, account) {
+  const { totalCollateralETH, totalDebtETH, availableBorrowsETH } =
+    await lendingPool.getUserAccountData(account);
+
+  console.log(`You have ${totalCollateralETH} worth of ETH deposited.`);
+  console.log(`You have ${totalDebtETH} worth of ETH borrowed.`);
+  console.log(`You can borrow ${availableBorrowsETH} worth of ETH.`);
 }
 
 main()
