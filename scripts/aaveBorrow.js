@@ -19,6 +19,29 @@ async function main() {
   await getBorrowUserData(lendingPool, deployer);
 }
 
+async function borrowDai(daiAddress, lendingPool, amountDaiToBorrow, account) {
+  const borrowTx = await lendingPool.borrow(
+    daiAddress,
+    amountDaiToBorrow,
+    1,
+    0,
+    account
+  );
+  await borrowTx.wait(1);
+  console.log(`You've borrowed!`);
+}
+
+async function getDaiPrice() {
+  const daiEthPriceFeed = await ethers.getContractAt(
+    "AggregatorV3Interface",
+    "0xB53C1a33016B2DC2fF3653530bfF1848a515c8c5"
+  );
+
+  const price = (await daiEthPriceFeed.latestRoundData())[1];
+  console.log(`The DAI/ETH price is ${daiEthPriceFeed.toString()}`);
+  return price;
+}
+
 async function approveErv20(erc20Address, spenderAddress, amount, signer) {
   const erc20Token = await ethers.getContractAt("IERC20", erc20Address, signer);
   const txResponse = await erc20Token.approve(spenderAddress, amount);
